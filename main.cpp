@@ -394,16 +394,18 @@ iota_iterator<T> operator -(
 )
 {return i - n;}
 
+struct Logger
+{
+    std::string name;
+    Logger(std::string name)
+        : name(name)
+    {std::cout << name << " was constructed"s << std::endl;}
+    ~Logger()
+    {std::cout << name << " was destructed"s << std::endl;}
+};
+
+
 int main(int argc, char const *argv[])
 {
-    std::vector<int> v = {1,2,3,4,5};
-    iota_iterator<int> i;
-    iota_iterator first(0), last(10);
-    iota_iterator non_const(0);
-    int value = *non_const;
-    value = 1;
-
-    iota_iterator immutable(0);
-    int const const_value = *immutable;
-    const_value = 1;
+    int * int_array_ptr = new int[5]{1,2,3,4,5};
 }
