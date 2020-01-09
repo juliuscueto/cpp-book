@@ -1,17 +1,74 @@
 #include "all.h"
 
-template<typename T>
-struct smart_ptr
+template < typename T, typename Allocator = std::allocator<T> >
+class vector
 {
-    T * ptr;
-    smart_ptr() : ptr(new T{}) {}
-    ~smart_ptr(){ delete ptr ;}
+    public:
+        using value_type = T;
+        using pointer = T*;
+        using const_pointer = const pointer;
+        using reference = value_type &;
+        using const_reference = const reference;
+        using allocator_type = Allocator;
+        using size_type = std::size_t;
+        using difference_type = std::ptrdiff_t;
+        using iterator = pointer;
+        using const_iterator = const_pointer;
+        using reverse_iterator = std::reverse_iterator<iterator>;
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    private:
+        pointer first;
+        pointer last;
+        pointer reserved_last;
+        allocator_type alloc;
+    public:
+        iterator begin() noexcept
+        { return first ; }
+        iterator end() noexcept
+        { return last ; }
+        iterator begin() const noexcept
+        { return first ; }
+        iterator end() const noexcept
+        { return last ; }
+        iterator cbegin() const noexcept
+        { return first ; }
+        iterator cend() const noexcept
+        { return last ; }
+        iterator rbegin() noexcept
+        { return reverse_iterator { last } ; }
+        iterator rend() noexcept
+        { return reverse_iterator { first } ; }
+        iterator rbegin() const noexcept
+        { return reverse_iterator { last } ; }
+        iterator rend() const noexcept
+        { return reverse_iterator { first } ; }
+        iterator crbegin() const noexcept
+        { return reverse_iterator { last } ; }
+        iterator crend() const noexcept
+        { return reverse_iterator { first } ; }
 
-    T & operator *() const noexcept{return *ptr;}
+        size_type size() const noexcept
+        {
+            return end() - begin();
+        }
+        bool empty() const noexcept
+        {
+            return size() == 0;
+        }
+        vector( std::size_t n = 0, Allocator a = Allocator());
+        ~vector();
+        vector(const vector &x);
+        vector & operator =( const vector & x );
+
+        void push_back( const T & x );
+        T & operator []( std::size_t i ) noexcept;
 };
 
 int main(int argc, char const *argv[])
 {
-    smart_ptr<int> ptr;
-    *ptr = 123;
+    vector<int> v(100);
+    for (auto i = 0; i != 100; ++i)
+    {
+        v[i] = i;
+    }
 }
