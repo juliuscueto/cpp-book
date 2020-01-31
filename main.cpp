@@ -21,7 +21,31 @@ class vector
         pointer last;
         pointer reserved_last;
         allocator_type alloc;
+        using traits = std::allocator_traits<allocator_type>;
+        pointer allocate(size_type)
+        template < typename Allocator >
+        void f(Allocator & alloc)
+        {
+            traits::allocate(alloc, 1);
+        }
     public:
+        vector( const allocator_type & alloc ) noexcept
+            : alloc(alloc)
+        {}
+        vector()
+            : vector( allocator_type() )
+        {}
+        vector(size_type size, const allocator_type & alloc = allocator_type())
+            : vector(alloc)
+        {
+            resize(size)
+        }
+        vector(size_type size, const_reference value, const allocator_type & alloc = allocator_type())
+            : vector(alloc)
+        {
+            resize(size, value)
+        }
+        ~vector();
         iterator begin() noexcept
         { return first ; }
         iterator end() noexcept
@@ -55,9 +79,43 @@ class vector
         {
             return size() == 0;
         }
-        vector( std::size_t n = 0, Allocator a = Allocator());
-        ~vector();
-        vector(const vector &x);
+        size_type capacity() const noexcept
+        {
+            return reserved_last - first;
+        }
+        reference operator [](size_type i)
+        { return first[i];}
+        const_reference operator[](size_type i)
+        { return first[i];}
+        reference at(size_type i)
+        {
+            if ( i >= size() )
+            {
+                throw std::out_of_range("Index is out of range");
+            }
+            return first[i];
+        }
+        const_reference at(size_type i) const
+        {
+            if ( i >= size() )
+            {
+                throw std::out_of_range("Index is out of range");
+            }
+            return first[i];
+        }
+        reference front()
+        { return first; }
+        const_reference front() const
+        { return first; }
+        reference back()
+        { return last - 1; }
+        const_reference back() const
+        { return last - 1; }
+        pointer data() noexcept
+        { return first; }
+        const_pointer data() const noexcept
+        { return first; }
+        
         vector & operator =( const vector & x );
 
         void push_back( const T & x );
